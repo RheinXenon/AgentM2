@@ -21,40 +21,40 @@ class Agent:
     def create_prompt_template(self):
         if self.role == "MultidisciplinaryTeam":
             templates = f"""
-                Act like a multidisciplinary team of healthcare professionals.
-                You will receive a medical report of a patient visited by a Cardiologist, Psychologist, and Pulmonologist.
-                Task: Review the patient's medical report from the Cardiologist, Psychologist, and Pulmonologist, analyze them and come up with a list of 3 possible health issues of the patient.
-                Just return a list of bullet points of 3 possible health issues of the patient and for each issue provide the reason.
+                你是一个由多学科医疗专业人员组成的医疗团队。
+                你将收到一位患者的医疗报告，该患者已由心脏科医生、心理医生和肺科医生诊断。
+                任务：审查患者从心脏科医生、心理医生和肺科医生获得的医疗报告，分析并列出患者可能存在的3个健康问题。
+                请仅返回患者可能存在的3个健康问题的要点列表，并为每个问题提供原因说明。
                 
-                Cardiologist Report: {self.extra_info.get('cardiologist_report', '')}
-                Psychologist Report: {self.extra_info.get('psychologist_report', '')}
-                Pulmonologist Report: {self.extra_info.get('pulmonologist_report', '')}
+                心脏科医生报告：{self.extra_info.get('cardiologist_report', '')}
+                心理医生报告：{self.extra_info.get('psychologist_report', '')}
+                肺科医生报告：{self.extra_info.get('pulmonologist_report', '')}
             """
         else:
             templates = {
                 "Cardiologist": """
-                    Act like a cardiologist. You will receive a medical report of a patient.
-                    Task: Review the patient's cardiac workup, including ECG, blood tests, Holter monitor results, and echocardiogram.
-                    Focus: Determine if there are any subtle signs of cardiac issues that could explain the patient's symptoms. Rule out any underlying heart conditions, such as arrhythmias or structural abnormalities, that might be missed on routine testing.
-                    Recommendation: Provide guidance on any further cardiac testing or monitoring needed to ensure there are no hidden heart-related concerns. Suggest potential management strategies if a cardiac issue is identified.
-                    Please only return the possible causes of the patient's symptoms and the recommended next steps.
-                    Medical Report: {medical_report}
+                    你是一名心脏科医生。你将收到一位患者的医疗报告。
+                    任务：审查患者的心脏检查结果，包括心电图（ECG）、血液检查、动态心电图监测结果和超声心动图。
+                    重点：确定是否有任何细微的心脏问题迹象可以解释患者的症状。排除任何潜在的心脏疾病，如心律失常或结构异常，这些在常规检查中可能被遗漏。
+                    建议：提供关于需要进一步的心脏检查或监测的指导，以确保没有隐藏的心脏相关问题。如果发现心脏问题，请提出潜在的管理策略。
+                    请仅返回患者症状的可能原因和建议的下一步措施。
+                    医疗报告：{medical_report}
                 """,
                 "Psychologist": """
-                    Act like a psychologist. You will receive a patient's report.
-                    Task: Review the patient's report and provide a psychological assessment.
-                    Focus: Identify any potential mental health issues, such as anxiety, depression, or trauma, that may be affecting the patient's well-being.
-                    Recommendation: Offer guidance on how to address these mental health concerns, including therapy, counseling, or other interventions.
-                    Please only return the possible mental health issues and the recommended next steps.
-                    Patient's Report: {medical_report}
+                    你是一名心理医生。你将收到一位患者的医疗报告。
+                    任务：审查患者的报告并提供心理评估。
+                    重点：识别可能影响患者心理健康的任何潜在心理健康问题，如焦虑、抑郁或创伤。
+                    建议：提供如何解决这些心理健康问题的指导，包括心理治疗、咨询或其他干预措施。
+                    请仅返回可能的心理健康问题和建议的下一步措施。
+                    患者报告：{medical_report}
                 """,
                 "Pulmonologist": """
-                    Act like a pulmonologist. You will receive a patient's report.
-                    Task: Review the patient's report and provide a pulmonary assessment.
-                    Focus: Identify any potential respiratory issues, such as asthma, COPD, or lung infections, that may be affecting the patient's breathing.
-                    Recommendation: Offer guidance on how to address these respiratory concerns, including pulmonary function tests, imaging studies, or other interventions.
-                    Please only return the possible respiratory issues and the recommended next steps.
-                    Patient's Report: {medical_report}
+                    你是一名肺科医生。你将收到一位患者的医疗报告。
+                    任务：审查患者的报告并提供肺部评估。
+                    重点：识别可能影响患者呼吸的任何潜在呼吸系统问题，如哮喘、慢性阻塞性肺病（COPD）或肺部感染。
+                    建议：提供如何解决这些呼吸系统问题的指导，包括肺功能测试、影像学检查或其他干预措施。
+                    请仅返回可能的呼吸系统问题和建议的下一步措施。
+                    患者报告：{medical_report}
                 """
             }
             templates = templates[self.role]
