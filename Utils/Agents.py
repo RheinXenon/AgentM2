@@ -1,5 +1,7 @@
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+import os
+import dashscope
+from dashscope import Generation
 
 class Agent:
     def __init__(self, medical_report=None, role=None, extra_info=None):
@@ -8,8 +10,13 @@ class Agent:
         self.extra_info = extra_info
         # Initialize the prompt based on role and other info
         self.prompt_template = self.create_prompt_template()
-        # Initialize the model
-        self.model = ChatOpenAI(temperature=0, model="gpt-5")
+        
+        # 使用阿里云百炼 DashScope API
+        self.api_key = os.getenv('DASHSCOPE_API_KEY')
+        self.model_name = os.getenv('DASHSCOPE_MODEL_NAME', 'qwen-plus')
+        
+        # 设置 DashScope API Key
+        dashscope.api_key = self.api_key
 
     def create_prompt_template(self):
         if self.role == "MultidisciplinaryTeam":
@@ -28,7 +35,7 @@ class Agent:
                 "Cardiologist": """
                     Act like a cardiologist. You will receive a medical report of a patient.
                     Task: Review the patient's cardiac workup, including ECG, blood tests, Holter monitor results, and echocardiogram.
-                    Focus: Determine if there are any subtle signs of cardiac issues that could explain the patient’s symptoms. Rule out any underlying heart conditions, such as arrhythmias or structural abnormalities, that might be missed on routine testing.
+                    Focus: Determine if there are any subtle signs of cardiac issues that could explain the patient's symptoms. Rule out any underlying heart conditions, such as arrhythmias or structural abnormalities, that might be missed on routine testing.
                     Recommendation: Provide guidance on any further cardiac testing or monitoring needed to ensure there are no hidden heart-related concerns. Suggest potential management strategies if a cardiac issue is identified.
                     Please only return the possible causes of the patient's symptoms and the recommended next steps.
                     Medical Report: {medical_report}
@@ -57,8 +64,20 @@ class Agent:
         print(f"{self.role} is running...")
         prompt = self.prompt_template.format(medical_report=self.medical_report)
         try:
-            response = self.model.invoke(prompt)
-            return response.content
+            # 使用阿里云 DashScope API 调用
+            response = Generation.call(
+                model=self.model_name,
+                prompt=prompt,
+                temperature=0
+            )
+            
+            # 检查响应状态
+            if response.status_code == 200:
+                return response.output.text
+            else:
+                print(f"Error: {response.code} - {response.message}")
+                return None
+                
         except Exception as e:
             print("Error occurred:", e)
             return None

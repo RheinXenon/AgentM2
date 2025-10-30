@@ -1,8 +1,6 @@
 langchain
 langchain-community 
-langchain-openai
 langchain-experimental
 python-dotenv
-langchain_ollama
+dashscope
 reportlab
-dotenv
